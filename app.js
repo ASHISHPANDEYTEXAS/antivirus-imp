@@ -23,7 +23,7 @@ async function findTrip() {
     }
 
     try {
-        const url = `http://localhost:5000/flights/search?origin=${originVal}&destination=${destVal}`;
+        const url = `https://jetswift-backend.onrender.com/flights/search?origin=${originVal}&destination=${destVal}`;
         const response = await fetch(url);
         const flights = await response.json();
 
@@ -56,7 +56,7 @@ async function findTrip() {
 // Function to generate and download the ticket
 async function bookTicket(airline, flightNo, from, to, price, date) {
   // 1. Call your backend to create an order
-  const response = await fetch('http://localhost:5000/create-order', {
+  const response = await fetch('https://jetswift-backend.onrender.com/create-order', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ amount: price })
@@ -142,7 +142,7 @@ async function submitAuth() {
   try
   {
 
-    const response = await fetch(`http://localhost:5000${endpoint}`, {
+    const response = await fetch(`https://jetswift-backend.onrender.com${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bodyData)

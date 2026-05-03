@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SkyHigh Air & Hotels</title>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+ 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+    body { 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        padding: 20px; 
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* Professional Airport/Plane Background */
+        background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(100, 121, 144, 0.4)), 
+                          url('airport6.jpg');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+
+    .container { 
+        background: rgba(134, 96, 131, 0.92); 
+        padding: 40px; 
+        border-radius: 15px; 
+        max-width: 450px; 
+        width: 100%;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px); /* Modern frosted glass effect */
+    }
+
+    h2 {
+        color: #003580; /* Airline Blue */
+        text-align: center;
+        margin-top: 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    h3 {
+        color: #555;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    input { 
+        width: 100%; 
+        padding: 12px; 
+        margin: 12px 0; 
+        box-sizing: border-box; 
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    button { 
+        width: 100%; 
+        padding: 14px; 
+        background: #007bff; 
+        color: white; 
+        border: none; 
+        border-radius: 8px;
+        cursor: pointer; 
+        font-size: 18px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+    }
+
+    button:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+    }
+
+    #results {
+        margin-top: 20px;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="container" id="auth-box">
+    <h2 id="form-title">Sign Up</h2>
+    <input type="text" id="name" placeholder="Full Name">
+    <input type="text" id="pass_mobile" placeholder="Passenger Mobile Number">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+
+    <input type="number" id="age" placeholder="Age">
+    <input type="text" id="par_mobile" placeholder="Parent Mobile Number">
+    <input type="text" id="country" placeholder="Country">
+    <input type="text" id="state" placeholder="State">
+    <input type="text" id="district" placeholder="District">
+
+    <button onclick="submitAuth()" id="btn-text">Register</button>
+    <p onclick="toggleAuth()" style="text-align:center; cursor:pointer; color: blue;">Already have an account? Login</p>
+</div>
+
+<div class="container hidden" id="dashboard">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2>Welcome, <span id="user-name"></span>!</h2>
+      <button onclick="showProfile()" style="width: auto; padding: 5px 15px; font-size: 14px; background: #28a745;">View Profile</button>
+    </div>
+
+
+<!-- Hidden Profile Management Section -->
+<div id="profile-section" class="hidden" style="color: white;">
+        <hr>
+        <h3>Your Profile</h3>
+        <p><strong>Age:</strong> <span id="p-age"></span></p>
+        <p><strong>Mobile:</strong> <span id="p-mobile"></span></p>
+        <p><strong>Address:</strong> <span id="p-address"></span></p>
+        <button onclick="hideProfile()" style="background: #6c757d;">Back to Search</button>
+ </div>   
+
+    <div id="booking-section">
+      <hr>
+       <h3 style="color: #fff;">Search & Book Flights</h3>
+      <input type="text" id="origin" placeholder="From">
+      <input type="text" id="destination" placeholder="Where to">
+      <button onclick="findTrip()">Search Flights</button>
+      <div id="results" style="margin-top: 20px;"></div>
+    </div>
+
+
+</div>
+ 
+<script src="app.js"></script>
+
+<!-- Footer with Mandatory Policy Links -->
+<footer style="margin-top: 50px; padding: 20px; background: rgba(0, 0, 0, 0.7); color: white; text-align: center; border-radius: 10px;">
+    <p>&copy; 2026 JetSwiftFly. All rights reserved.</p>
+    <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+        <a href="contact.html" style="color: #007bff; text-decoration: none;">Contact Us</a>
+        <a href="terms.html" style="color: #007bff; text-decoration: none;">Terms & Conditions</a>
+        <a href="privacy.html" style="color: #007bff; text-decoration: none;">Privacy Policy</a>
+        <a href="refund.html" style="color: #007bff; text-decoration: none;">Refund & Cancellation</a>
+    </div>
+</footer>
+
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SkyHigh Air | Premium Travel</title>
+    <title>JetSwift | AI-Powered Travel</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Payment & PDF Libraries -->
@@ -11,227 +11,266 @@
 
     <style>
         :root {
-            --primary-blue: #007bff;
-            --dark-blue: #003580;
-            --glass: rgba(255, 255, 255, 0.95);
-            --danger: #dc3545;
+            --primary-glow: #00d2ff;
+            --secondary-glow: #3a7bd5;
+            --glass-bg: rgba(15, 20, 30, 0.7);
+            --text-main: #ffffff;
+            --text-dim: #b0b8c4;
+            --danger: #ff4b5c;
         }
 
         body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif; 
             padding: 0; margin: 0;
             min-height: 100vh; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-                        url('airport6.jpg') no-repeat center center fixed;
+            background: #0f172a; /* Dark space background */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 210, 255, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(58, 123, 213, 0.1) 0%, transparent 40%),
+                url('airport6.jpg');
             background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            overflow-x: hidden;
         }
 
+        /* AI Glassmorphism Card */
         .container { 
-            background: var(--glass); 
-            padding: 30px; 
-            border-radius: 20px; 
-            max-width: 500px; 
+            background: var(--glass-bg); 
+            padding: 40px; 
+            border-radius: 24px; 
+            max-width: 450px; 
             width: 90%; 
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            margin: 40px auto;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            margin: 60px auto;
             box-sizing: border-box;
-            animation: fadeIn 0.5s ease-out;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        h2 { color: var(--dark-blue); text-align: center; margin-bottom: 25px; font-weight: 800; }
+        h2 { 
+          font-weight: 700; 
+          letter-spacing: -0.5px; 
+          margin-bottom: 30px; 
+          background: linear-gradient(to right, #fff, #a5b4fc); 
+          background-clip: text;            /* Standard version */
+          -webkit-background-clip: text;    /* Vendor prefix for Chrome/Safari */
+          color: transparent;               /* Standard way to hide text and show background */
+          -webkit-text-fill-color: transparent; 
+         }
         
-        .input-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; margin-bottom: 5px; font-size: 14px; color: #555; font-weight: 600; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; margin-bottom: 8px; font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
 
         input { 
-            width: 100%; padding: 14px; 
-            border: 1px solid #ddd; border-radius: 10px;
-            font-size: 16px; box-sizing: border-box;
-            transition: border 0.3s;
+            width: 100%; padding: 14px 16px; 
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 12px;
+            font-size: 16px; color: #fff;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
         }
 
-        input:focus { border-color: var(--primary-blue); outline: none; }
+        input:focus { 
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+            outline: none; 
+        }
 
+        /* AI Neon Button */
         button { 
             width: 100%; padding: 16px; 
-            background: var(--primary-blue); color: white; 
-            border: none; border-radius: 10px;
-            cursor: pointer; font-size: 16px; font-weight: bold;
-            transition: all 0.3s; margin-top: 10px;
+            background: linear-gradient(135deg, var(--primary-glow), var(--secondary-glow));
+            color: white; border: none; border-radius: 12px;
+            cursor: pointer; font-size: 16px; font-weight: 700;
+            transition: all 0.4s ease; margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
         }
 
-        button:hover { background: var(--dark-blue); transform: translateY(-2px); }
+        button:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 210, 255, 0.5);
+            filter: brightness(1.1);
+        }
 
-        /* Profile Dropdown Logic */
-        .user-profile-wrapper { position: relative; display: inline-block; }
+        /* Navigation Header */
+        .header-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; max-width: 1000px; padding: 20px; box-sizing: border-box;
+        }
+
+        .logo { 
+            font-size: 24px; 
+            font-weight: 900; 
+            background: linear-gradient(to right, var(--primary-glow), #fff); 
+            background-clip: text;            /* Standard version */
+            -webkit-background-clip: text;    /* Vendor prefix for Chrome/Safari */
+            color: transparent;               /* Standard way to hide text and show background */
+            -webkit-text-fill-color: transparent; 
+        }
 
         .profile-trigger {
-            display: flex; align-items: center; gap: 10px;
-            background: #f8f9fa; padding: 8px 15px;
-            border-radius: 30px; cursor: pointer;
-            border: 1px solid #ddd; transition: 0.3s;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 18px; border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer; transition: 0.3s;
         }
 
+        /* Dropdown Menu */
         .dropdown-menu {
-            position: absolute; right: 0; top: 50px;
-            background: white; min-width: 200px;
-            border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            display: none; z-index: 100; overflow: hidden;
+            position: absolute; right: 0; top: 55px;
+            background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            display: none; z-index: 100; overflow: hidden; width: 220px;
         }
 
         .dropdown-menu.show { display: block; animation: fadeIn 0.3s ease; }
 
         .dropdown-item {
-            padding: 12px 20px; color: #333; font-size: 14px;
-            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px;
+            padding: 14px 20px; color: var(--text-dim); font-size: 14px;
+            cursor: pointer; transition: 0.2s;
         }
 
-        .dropdown-item:hover { background: #f0f7ff; color: var(--primary-blue); }
+        .dropdown-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
 
-        /* Spinner */
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%; border-top: 4px solid var(--primary-blue);
-            width: 30px; height: 30px;
-            animation: spin 1s linear infinite; margin: 0 auto;
-        }
-
-        /* Booking Modal */
+        /* Modal / Popups */
         #booking-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 1000;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .modal-content {
-            background: white; padding: 30px; border-radius: 20px;
-            width: 90%; max-width: 450px; max-height: 90vh; overflow-y: auto;
+            background: rgba(10, 15, 25, 0.9); backdrop-filter: blur(10px);
+            z-index: 1000; display: flex; align-items: center; justify-content: center;
         }
 
         .hidden { display: none !important; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         footer {
-            margin-top: auto; padding: 30px; width: 100%;
-            background: rgba(0,0,0,0.85); color: white; text-align: center;
+            margin-top: auto; padding: 40px; width: 100%;
+            background: rgba(15, 23, 42, 0.8); border-top: 1px solid rgba(255,255,255,0.05);
+            text-align: center; color: var(--text-dim); font-size: 13px;
         }
+
+        footer a { color: var(--text-main); text-decoration: none; margin: 0 10px; }
     </style>
 </head>
 <body>
 
-<!-- AUTH SECTION -->
+<!-- AI AUTH BOX -->
 <div class="container" id="auth-box">
-    <h2 id="form-title">Create Account</h2>
-    <div class="input-group" id="name-group">
-        <label>Full Name</label>
-        <input type="text" id="name" placeholder="Enter your full name">
-    </div>
-    <div class="input-group">
-        <label>Email Address</label>
-        <input type="email" id="email" placeholder="email@example.com">
-    </div>
-    <div class="input-group">
-        <label>Password</label>
-        <input type="password" id="password" placeholder="Min. 8 characters">
+    <h2 id="form-title">Neural Login</h2>
+    
+    <!-- This starts hidden because we default to Login -->
+    <div class="input-group hidden" id="name-group">
+        <label>Full Identity</label>
+        <input type="text" id="name" placeholder="Name">
     </div>
 
-    <button onclick="submitAuth()" id="btn-text">Register</button>
-    <p onclick="toggleAuth()" style="text-align:center; cursor:pointer; color: var(--primary-blue); font-weight:600; margin-top:20px;">
-        Already have an account? Login
+    <div class="input-group">
+        <label>Node Address</label>
+        <input type="email" id="email" placeholder="Email">
+    </div>
+
+    <div class="input-group">
+        <label>Access Key</label>
+        <input type="password" id="password" placeholder="Password">
+    </div>
+
+    <button onclick="submitAuth()" id="btn-text">Authenticate</button>
+    
+    <p id="toggle-text" style="margin-top: 25px; font-size: 14px; color: var(--text-dim);">
+        New user? <span onclick="toggleAuth()" style="color: var(--primary-glow); cursor: pointer; font-weight: 600;">Initialize Account</span>
     </p>
 </div>
 
-<!-- DASHBOARD SECTION -->
-<div class="container hidden" id="dashboard">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
-        <h2 style="margin: 0; font-size: 1.2rem; color: var(--dark-blue);">SkyHigh</h2>
-        
+<!-- DASHBOARD -->
+<div class="container hidden" id="dashboard" style="max-width: 800px;">
+    <div class="header-nav" style="padding: 0; margin-bottom: 30px;">
+        <div class="logo">JETSWIFT</div>
         <div class="user-profile-wrapper">
             <div class="profile-trigger" onclick="toggleDropdown()">
-                <span id="user-display-name" style="color: var(--dark-blue); font-weight: 600;">Account</span>
-                <span style="font-size: 10px;">▼</span>
+                <span id="user-display-name">Pilot</span>
             </div>
-            
             <div class="dropdown-menu" id="profile-dropdown">
-                <div class="dropdown-item" onclick="showProfile()">👤 My Profile</div>
-                <div class="dropdown-item" onclick="showSearch()">✈️ Book Flights</div>
-                <div style="height:1px; background:#eee;"></div>
-                <div class="dropdown-item" onclick="handleLogout()" style="color: var(--danger);">🚪 Logout</div>
+                <div class="dropdown-item" onclick="showProfile()">Protocol: Profile</div>
+                <div class="dropdown-item" onclick="showSearch()">Protocol: Search</div>
+                <div class="dropdown-item" onclick="handleLogout()" style="color: var(--danger);">Terminate Session</div>
             </div>
         </div>
     </div>
 
-    <!-- Loader -->
-    <div id="loader" class="hidden" style="text-align: center; padding: 20px;">
-        <div class="spinner"></div>
-        <p style="color: #666; margin-top: 10px;">Processing...</p>
+    <div id="loader" class="hidden">
+        <div style="width: 40px; height: 40px; border: 3px solid rgba(0,210,255,0.2); border-top-color: var(--primary-glow); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 20px auto;"></div>
     </div>
 
-    <!-- Profile Display -->
     <div id="profile-section" class="hidden">
-        <h3>User Profile</h3>
-        <p><strong>Name:</strong> <span id="p-name-display"></span></p>
-        <p><strong>Email:</strong> <span id="p-email-display"></span></p>
-        <button onclick="showSearch()" style="background: #6c757d;">Back to Search</button>
+        <h3 style="color: var(--primary-glow);">Identity Overview</h3>
+        <p>Name: <span id="p-name-display"></span></p>
+        <p>Registry: <span id="p-email-display"></span></p>
+        <button onclick="showSearch()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">Return to Nav</button>
     </div>
 
-    <!-- Search Section -->
     <div id="booking-section">
-        <h2 style="text-align: left; font-size: 20px;">Where to next?</h2>
-        <input type="text" id="origin" placeholder="🛫 Origin City" style="margin-bottom: 10px;">
-        <input type="text" id="destination" placeholder="🛬 Destination City">
-        <button onclick="findTrip()" style="background: var(--dark-blue);">Search Flights</button>
-        <div id="results" style="margin-top: 20px;"></div>
+        <h2 style="text-align: left;">Flight Trajectory</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <input type="text" id="origin" placeholder="Source">
+            <input type="text" id="destination" placeholder="Destination">
+        </div>
+        <button onclick="findTrip()">Scan Available Flights</button>
+        <div id="results" style="margin-top: 30px;"></div>
     </div>
 </div>
 
-<!-- BOOKING MODAL (Passenger Info) -->
+<!-- PASSENGER MODAL -->
 <div id="booking-modal" class="hidden">
-    <div class="modal-content">
-        <h2 style="font-size: 22px; margin-bottom: 10px;">Passenger Details</h2>
-        <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Complete your booking details below.</p>
-        
-        <div class="input-group">
-            <label>Age</label>
-            <input type="number" id="book-age" placeholder="Enter age">
-        </div>
-        <div class="input-group">
-            <label>Contact Number</label>
-            <input type="text" id="book-mobile" placeholder="Phone number">
-        </div>
-        <div class="input-group">
-            <label>Full Address</label>
-            <input type="text" id="book-address" placeholder="City, State, Country">
-        </div>
-
-        <button onclick="confirmAndPay()" style="background: #28a745;">Confirm & Pay</button>
-        <button onclick="closeModal()" style="background: #6c757d; margin-top: 10px;">Cancel</button>
+    <div class="container" style="margin: 0; max-width: 400px;">
+        <h2 style="font-size: 1.5rem;">Passenger Data</h2>
+        <div class="input-group"><label>Age</label><input type="number" id="book-age"></div>
+        <div class="input-group"><label>Comms Number</label><input type="text" id="book-mobile"></div>
+        <div class="input-group"><label>Location Registry</label><input type="text" id="book-address"></div>
+        <button onclick="confirmAndPay()">Finalize & Execute</button>
+        <button onclick="closeModal()" style="background: transparent; color: var(--text-dim); margin-top: 5px;">Abort</button>
     </div>
 </div>
 
 <script src="app.js"></script>
 
 <footer>
-    <p>&copy; 2026 JetSwiftFly. All rights reserved.</p>
-    <div style="display: flex; justify-content: center; gap: 15px; font-size: 12px; margin-top: 10px; flex-wrap: wrap;">
-        <a href="contact.html" style="color: #fff; text-decoration: none;">Contact</a>
-        <a href="terms.html" style="color: #fff; text-decoration: none;">Terms & Conditions</a>
-        <a href="privacy.html" style="color: #fff; text-decoration: none;">Privacy</a>
-        <a href="refund.html" style="color: #fff; text-decoration: none;">Refund Policy</a>
+    <p>&copy; 2026 JetSwift AI Trajectories. All systems operational.</p>
+    <div>
+        <a href="terms.html">Terms & Conditions</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="refund.html">Refunds</a>
+        <a href="contact.html">Contact Us</a>
     </div>
 </footer>
+
+<script>
+    // Internal Script for UI State Only
+    let isLogin = true; // Default to Login
+
+    function toggleAuth() {
+        isLogin = !isLogin;
+        document.getElementById('form-title').innerText = isLogin ? "Neural Login" : "Initialize Account";
+        document.getElementById('btn-text').innerText = isLogin ? "Authenticate" : "Initialize";
+        document.getElementById('name-group').classList.toggle('hidden', isLogin);
+        document.getElementById('toggle-text').innerHTML = isLogin ? 
+            "New user? <span onclick='toggleAuth()' style='color: var(--primary-glow); cursor: pointer;'>Initialize Account</span>" : 
+            "Existing pilot? <span onclick='toggleAuth()' style='color: var(--primary-glow); cursor: pointer;'>Login Access</span>";
+    }
+</script>
 
 </body>
 </html>

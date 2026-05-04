@@ -1,235 +1,235 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>SkyHigh Air & Hotels</title>
+    <meta charset="UTF-8">
+    <title>SkyHigh Air | Premium Travel</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Payment & PDF Libraries -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
- 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
-    body { 
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-        padding: 10px; 
-        margin: 0;
-        /* Changed from height to min-height to allow scrolling on mobile */
-        min-height: 100vh; 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(100, 121, 144, 0.4)), 
-                          url('airport6.jpg');
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-    }
-
-    .container { 
-        background: rgba(134, 96, 131, 0.92); 
-        padding: 25px; 
-        border-radius: 15px; 
-        max-width: 450px; 
-        width: 92%; /* Gives breathing room on mobile edges */
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(5px);
-        margin: 20px auto; /* Centers container and adds vertical spacing */
-        box-sizing: border-box;
-    }
-
-    h2 {
-        color: #003580;
-        text-align: center;
-        margin-top: 0;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-size: 1.5rem;
-    }
-
-    h3 {
-        color: #fff; /* Changed to white for better visibility on purple */
-        border-bottom: 2px solid #007bff;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-    }
-
-    input { 
-        width: 100%; 
-        padding: 12px; 
-        margin: 8px 0; /* Slightly tighter margins for mobile */
-        box-sizing: border-box; 
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-size: 16px; /* Prevents iOS auto-zoom on focus */
-    }
-
-    button { 
-        width: 100%; 
-        padding: 14px; 
-        background: #007bff; 
-        color: white; 
-        border: none; 
-        border-radius: 8px;
-        cursor: pointer; 
-        font-size: 18px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        margin-top: 10px;
-    }
-
-    button:hover {
-        background: #0056b3;
-        transform: translateY(-2px);
-    }
-
-    #results {
-        margin-top: 20px;
-        max-height: 250px;
-        overflow-y: auto;
-        /* Smooth scrolling for mobile */
-        -webkit-overflow-scrolling: touch;
-    }
-
-    footer {
-        width: 100%;
-        max-width: 800px;
-        margin-top: auto; 
-        padding: 20px;
-        box-sizing: border-box;
-    }
-
-    .hidden { display: none; }
-
-    /* Mobile-Specific Adjustments */
-    @media (max-width: 480px) {
-        .container {
-            padding: 20px;
+        :root {
+            --primary-blue: #007bff;
+            --dark-blue: #003580;
+            --glass: rgba(255, 255, 255, 0.95);
+            --danger: #dc3545;
         }
-        h2 {
-            font-size: 1.2rem;
+
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            padding: 0; margin: 0;
+            min-height: 100vh; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url('airport6.jpg') no-repeat center center fixed;
+            background-size: cover;
         }
-        button {
-            font-size: 16px;
-            padding: 12px;
+
+        .container { 
+            background: var(--glass); 
+            padding: 30px; 
+            border-radius: 20px; 
+            max-width: 500px; 
+            width: 90%; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            margin: 40px auto;
+            box-sizing: border-box;
+            animation: fadeIn 0.5s ease-out;
         }
-    }
 
-    /* Animation for Smooth Entry */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+        h2 { color: var(--dark-blue); text-align: center; margin-bottom: 25px; font-weight: 800; }
+        
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; color: #555; font-weight: 600; }
 
-.container:not(.hidden) {
-    animation: fadeIn 0.6s ease-out;
-}
+        input { 
+            width: 100%; padding: 14px; 
+            border: 1px solid #ddd; border-radius: 10px;
+            font-size: 16px; box-sizing: border-box;
+            transition: border 0.3s;
+        }
 
-/* Luxury Logout Button */
-.logout-btn {
-    width: auto !important;
-    background: rgba(255, 255, 255, 0.15) !important;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    padding: 8px 15px !important;
-    font-size: 13px !important;
-    backdrop-filter: blur(5px);
-}
+        input:focus { border-color: var(--primary-blue); outline: none; }
 
-.logout-btn:hover {
-    background: #dc3545 !important;
-    border-color: #dc3545 !important;
-}
+        button { 
+            width: 100%; padding: 16px; 
+            background: var(--primary-blue); color: white; 
+            border: none; border-radius: 10px;
+            cursor: pointer; font-size: 16px; font-weight: bold;
+            transition: all 0.3s; margin-top: 10px;
+        }
 
-/* Loading Spinner */
-.spinner {
-    border: 4px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top: 4px solid #fff;
-    width: 30px;
-    height: 30px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
-}
+        button:hover { background: var(--dark-blue); transform: translateY(-2px); }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+        /* Profile Dropdown Logic */
+        .user-profile-wrapper { position: relative; display: inline-block; }
 
+        .profile-trigger {
+            display: flex; align-items: center; gap: 10px;
+            background: #f8f9fa; padding: 8px 15px;
+            border-radius: 30px; cursor: pointer;
+            border: 1px solid #ddd; transition: 0.3s;
+        }
+
+        .dropdown-menu {
+            position: absolute; right: 0; top: 50px;
+            background: white; min-width: 200px;
+            border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: none; z-index: 100; overflow: hidden;
+        }
+
+        .dropdown-menu.show { display: block; animation: fadeIn 0.3s ease; }
+
+        .dropdown-item {
+            padding: 12px 20px; color: #333; font-size: 14px;
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 10px;
+        }
+
+        .dropdown-item:hover { background: #f0f7ff; color: var(--primary-blue); }
+
+        /* Spinner */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%; border-top: 4px solid var(--primary-blue);
+            width: 30px; height: 30px;
+            animation: spin 1s linear infinite; margin: 0 auto;
+        }
+
+        /* Booking Modal */
+        #booking-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .modal-content {
+            background: white; padding: 30px; border-radius: 20px;
+            width: 90%; max-width: 450px; max-height: 90vh; overflow-y: auto;
+        }
+
+        .hidden { display: none !important; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            margin-top: auto; padding: 30px; width: 100%;
+            background: rgba(0,0,0,0.85); color: white; text-align: center;
+        }
     </style>
-    
 </head>
 <body>
 
+<!-- AUTH SECTION -->
 <div class="container" id="auth-box">
-    <h2 id="form-title">Sign Up</h2>
-    <input type="text" id="name" placeholder="Full Name">
-    <input type="text" id="pass_mobile" placeholder="Passenger Mobile Number">
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-
-    <input type="number" id="age" placeholder="Age">
-    <input type="text" id="par_mobile" placeholder="Parent Mobile Number">
-    <input type="text" id="country" placeholder="Country">
-    <input type="text" id="state" placeholder="State">
-    <input type="text" id="district" placeholder="District">
+    <h2 id="form-title">Create Account</h2>
+    <div class="input-group" id="name-group">
+        <label>Full Name</label>
+        <input type="text" id="name" placeholder="Enter your full name">
+    </div>
+    <div class="input-group">
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="email@example.com">
+    </div>
+    <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Min. 8 characters">
+    </div>
 
     <button onclick="submitAuth()" id="btn-text">Register</button>
-    <p onclick="toggleAuth()" style="text-align:center; cursor:pointer; color: blue;">Already have an account? Login</p>
+    <p onclick="toggleAuth()" style="text-align:center; cursor:pointer; color: var(--primary-blue); font-weight:600; margin-top:20px;">
+        Already have an account? Login
+    </p>
 </div>
 
-<!-- Updated Dashboard Container -->
+<!-- DASHBOARD SECTION -->
 <div class="container hidden" id="dashboard">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <div style="text-align: left;">
-            <p style="color: #e0e0e0; margin: 0; font-size: 14px;">Welcome back,</p>
-            <h2 id="user-name" style="color: #fff; margin: 0; text-align: left; font-size: 1.4rem;"></h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+        <h2 style="margin: 0; font-size: 1.2rem; color: var(--dark-blue);">SkyHigh</h2>
+        
+        <div class="user-profile-wrapper">
+            <div class="profile-trigger" onclick="toggleDropdown()">
+                <span id="user-display-name" style="color: var(--dark-blue); font-weight: 600;">Account</span>
+                <span style="font-size: 10px;">▼</span>
+            </div>
+            
+            <div class="dropdown-menu" id="profile-dropdown">
+                <div class="dropdown-item" onclick="showProfile()">👤 My Profile</div>
+                <div class="dropdown-item" onclick="showSearch()">✈️ Book Flights</div>
+                <div style="height:1px; background:#eee;"></div>
+                <div class="dropdown-item" onclick="handleLogout()" style="color: var(--danger);">🚪 Logout</div>
+            </div>
         </div>
-        <button onclick="handleLogout()" class="logout-btn">
-            Logout
-        </button>
     </div>
 
-    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-        <button onclick="showProfile()" style="flex: 1; background: #28a745; font-size: 14px; padding: 10px;">Profile</button>
-        <button onclick="showSearch()" style="flex: 1; background: #007bff; font-size: 14px; padding: 10px;">Search</button>
-    </div>
-
-    <!-- Loading Overlay for transitions -->
+    <!-- Loader -->
     <div id="loader" class="hidden" style="text-align: center; padding: 20px;">
         <div class="spinner"></div>
-        <p style="color: white; margin-top: 10px;">Securing your session...</p>
+        <p style="color: #666; margin-top: 10px;">Processing...</p>
     </div>
 
-    <!-- Hidden Profile Section -->
-    <div id="profile-section" class="hidden" style="color: white; animation: fadeIn 0.5s;">
-        <hr style="opacity: 0.3;">
-        <h3>Account Details</h3>
-        <p><strong>Age:</strong> <span id="p-age"></span></p>
-        <p><strong>Mobile:</strong> <span id="p-mobile"></span></p>
-        <p><strong>Address:</strong> <span id="p-address"></span></p>
-    </div>   
+    <!-- Profile Display -->
+    <div id="profile-section" class="hidden">
+        <h3>User Profile</h3>
+        <p><strong>Name:</strong> <span id="p-name-display"></span></p>
+        <p><strong>Email:</strong> <span id="p-email-display"></span></p>
+        <button onclick="showSearch()" style="background: #6c757d;">Back to Search</button>
+    </div>
 
     <!-- Search Section -->
     <div id="booking-section">
-        <h3 style="color: #fff;">Search & Book Flights</h3>
-        <input type="text" id="origin" placeholder="From (e.g. New York)">
-        <input type="text" id="destination" placeholder="To (e.g. London)">
-        <button onclick="findTrip()">Search Flights</button>
-        <div id="results"></div>
+        <h2 style="text-align: left; font-size: 20px;">Where to next?</h2>
+        <input type="text" id="origin" placeholder="🛫 Origin City" style="margin-bottom: 10px;">
+        <input type="text" id="destination" placeholder="🛬 Destination City">
+        <button onclick="findTrip()" style="background: var(--dark-blue);">Search Flights</button>
+        <div id="results" style="margin-top: 20px;"></div>
     </div>
 </div>
- 
+
+<!-- BOOKING MODAL (Passenger Info) -->
+<div id="booking-modal" class="hidden">
+    <div class="modal-content">
+        <h2 style="font-size: 22px; margin-bottom: 10px;">Passenger Details</h2>
+        <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Complete your booking details below.</p>
+        
+        <div class="input-group">
+            <label>Age</label>
+            <input type="number" id="book-age" placeholder="Enter age">
+        </div>
+        <div class="input-group">
+            <label>Contact Number</label>
+            <input type="text" id="book-mobile" placeholder="Phone number">
+        </div>
+        <div class="input-group">
+            <label>Full Address</label>
+            <input type="text" id="book-address" placeholder="City, State, Country">
+        </div>
+
+        <button onclick="confirmAndPay()" style="background: #28a745;">Confirm & Pay</button>
+        <button onclick="closeModal()" style="background: #6c757d; margin-top: 10px;">Cancel</button>
+    </div>
+</div>
+
 <script src="app.js"></script>
 
-<!-- Footer with Mandatory Policy Links -->
-<footer style="margin-top: 50px; padding: 20px; background: rgba(0, 0, 0, 0.7); color: white; text-align: center; border-radius: 10px;">
+<footer>
     <p>&copy; 2026 JetSwiftFly. All rights reserved.</p>
-    <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-        <a href="contact.html" style="color: #007bff; text-decoration: none;">Contact Us</a>
-        <a href="terms.html" style="color: #007bff; text-decoration: none;">Terms & Conditions</a>
-        <a href="privacy.html" style="color: #007bff; text-decoration: none;">Privacy Policy</a>
-        <a href="refund.html" style="color: #007bff; text-decoration: none;">Refund & Cancellation</a>
+    <div style="display: flex; justify-content: center; gap: 15px; font-size: 12px; margin-top: 10px; flex-wrap: wrap;">
+        <a href="contact.html" style="color: #fff; text-decoration: none;">Contact</a>
+        <a href="terms.html" style="color: #fff; text-decoration: none;">Terms & Conditions</a>
+        <a href="privacy.html" style="color: #fff; text-decoration: none;">Privacy</a>
+        <a href="refund.html" style="color: #fff; text-decoration: none;">Refund Policy</a>
     </div>
 </footer>
 

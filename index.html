@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>SkyHigh Air & Hotels</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
  
@@ -10,13 +11,14 @@
     <style>
     body { 
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-        padding: 20px; 
+        padding: 10px; 
         margin: 0;
-        height: 100vh;
+        /* Changed from height to min-height to allow scrolling on mobile */
+        min-height: 100vh; 
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        /* Professional Airport/Plane Background */
         background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(100, 121, 144, 0.4)), 
                           url('airport6.jpg');
         background-size: cover;
@@ -26,24 +28,27 @@
 
     .container { 
         background: rgba(134, 96, 131, 0.92); 
-        padding: 40px; 
+        padding: 25px; 
         border-radius: 15px; 
         max-width: 450px; 
-        width: 100%;
+        width: 92%; /* Gives breathing room on mobile edges */
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(5px); /* Modern frosted glass effect */
+        backdrop-filter: blur(5px);
+        margin: 20px auto; /* Centers container and adds vertical spacing */
+        box-sizing: border-box;
     }
 
     h2 {
-        color: #003580; /* Airline Blue */
+        color: #003580;
         text-align: center;
         margin-top: 0;
         text-transform: uppercase;
         letter-spacing: 1px;
+        font-size: 1.5rem;
     }
 
     h3 {
-        color: #555;
+        color: #fff; /* Changed to white for better visibility on purple */
         border-bottom: 2px solid #007bff;
         padding-bottom: 10px;
         margin-bottom: 20px;
@@ -52,11 +57,11 @@
     input { 
         width: 100%; 
         padding: 12px; 
-        margin: 12px 0; 
+        margin: 8px 0; /* Slightly tighter margins for mobile */
         box-sizing: border-box; 
         border: 1px solid #ddd;
         border-radius: 8px;
-        font-size: 16px;
+        font-size: 16px; /* Prevents iOS auto-zoom on focus */
     }
 
     button { 
@@ -76,17 +81,83 @@
     button:hover {
         background: #0056b3;
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
     }
 
     #results {
         margin-top: 20px;
-        max-height: 300px;
+        max-height: 250px;
         overflow-y: auto;
+        /* Smooth scrolling for mobile */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    footer {
+        width: 100%;
+        max-width: 800px;
+        margin-top: auto; 
+        padding: 20px;
+        box-sizing: border-box;
     }
 
     .hidden { display: none; }
-</style>
+
+    /* Mobile-Specific Adjustments */
+    @media (max-width: 480px) {
+        .container {
+            padding: 20px;
+        }
+        h2 {
+            font-size: 1.2rem;
+        }
+        button {
+            font-size: 16px;
+            padding: 12px;
+        }
+    }
+
+    /* Animation for Smooth Entry */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.container:not(.hidden) {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Luxury Logout Button */
+.logout-btn {
+    width: auto !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    padding: 8px 15px !important;
+    font-size: 13px !important;
+    backdrop-filter: blur(5px);
+}
+
+.logout-btn:hover {
+    background: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+/* Loading Spinner */
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid #fff;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+    </style>
+    
 </head>
 <body>
 
@@ -107,33 +178,46 @@
     <p onclick="toggleAuth()" style="text-align:center; cursor:pointer; color: blue;">Already have an account? Login</p>
 </div>
 
+<!-- Updated Dashboard Container -->
 <div class="container hidden" id="dashboard">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-      <h2>Welcome, <span id="user-name"></span>!</h2>
-      <button onclick="showProfile()" style="width: auto; padding: 5px 15px; font-size: 14px; background: #28a745;">View Profile</button>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div style="text-align: left;">
+            <p style="color: #e0e0e0; margin: 0; font-size: 14px;">Welcome back,</p>
+            <h2 id="user-name" style="color: #fff; margin: 0; text-align: left; font-size: 1.4rem;"></h2>
+        </div>
+        <button onclick="handleLogout()" class="logout-btn">
+            Logout
+        </button>
     </div>
 
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button onclick="showProfile()" style="flex: 1; background: #28a745; font-size: 14px; padding: 10px;">Profile</button>
+        <button onclick="showSearch()" style="flex: 1; background: #007bff; font-size: 14px; padding: 10px;">Search</button>
+    </div>
 
-<!-- Hidden Profile Management Section -->
-<div id="profile-section" class="hidden" style="color: white;">
-        <hr>
-        <h3>Your Profile</h3>
+    <!-- Loading Overlay for transitions -->
+    <div id="loader" class="hidden" style="text-align: center; padding: 20px;">
+        <div class="spinner"></div>
+        <p style="color: white; margin-top: 10px;">Securing your session...</p>
+    </div>
+
+    <!-- Hidden Profile Section -->
+    <div id="profile-section" class="hidden" style="color: white; animation: fadeIn 0.5s;">
+        <hr style="opacity: 0.3;">
+        <h3>Account Details</h3>
         <p><strong>Age:</strong> <span id="p-age"></span></p>
         <p><strong>Mobile:</strong> <span id="p-mobile"></span></p>
         <p><strong>Address:</strong> <span id="p-address"></span></p>
-        <button onclick="hideProfile()" style="background: #6c757d;">Back to Search</button>
- </div>   
+    </div>   
 
+    <!-- Search Section -->
     <div id="booking-section">
-      <hr>
-       <h3 style="color: #fff;">Search & Book Flights</h3>
-      <input type="text" id="origin" placeholder="From">
-      <input type="text" id="destination" placeholder="Where to">
-      <button onclick="findTrip()">Search Flights</button>
-      <div id="results" style="margin-top: 20px;"></div>
+        <h3 style="color: #fff;">Search & Book Flights</h3>
+        <input type="text" id="origin" placeholder="From (e.g. New York)">
+        <input type="text" id="destination" placeholder="To (e.g. London)">
+        <button onclick="findTrip()">Search Flights</button>
+        <div id="results"></div>
     </div>
-
-
 </div>
  
 <script src="app.js"></script>

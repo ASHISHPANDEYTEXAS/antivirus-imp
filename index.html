@@ -38,13 +38,13 @@
             overflow-x: hidden;
         }
 
-        /* --- AUTHENTICATION BOX (Centered) --- */
+        /* --- AUTHENTICATION BOX --- */
         #auth-container {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 40px 20px;
         }
 
         .auth-card { 
@@ -60,10 +60,10 @@
             animation: fadeIn 0.8s ease-out;
         }
 
-        /* --- FULL SCREEN DASHBOARD LAYOUT --- */
+        /* --- DASHBOARD LAYOUT --- */
         #dashboard {
             width: 100%;
-            min-height: 100vh;
+            flex: 1;
             display: flex;
             flex-direction: column;
             animation: fadeIn 0.5s ease-in;
@@ -86,13 +86,12 @@
         .main-content {
             flex: 1;
             padding: 40px 5%;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             width: 100%;
             box-sizing: border-box;
         }
 
-        /* --- UI COMPONENTS --- */
         .glass-panel {
             background: var(--glass-bg);
             border-radius: 20px;
@@ -102,13 +101,7 @@
             margin-bottom: 30px;
         }
 
-        h2 { 
-            font-weight: 700; 
-            background: linear-gradient(to right, #fff, #a5b4fc); 
-            background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            margin-bottom: 25px;
-        }
+        h2 { font-weight: 700; margin-bottom: 25px; color: #fff; }
         
         .input-group { margin-bottom: 20px; text-align: left; }
         label { display: block; margin-bottom: 8px; font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
@@ -120,10 +113,7 @@
             border-radius: 12px;
             font-size: 16px; color: #fff;
             box-sizing: border-box;
-            transition: 0.3s;
         }
-
-        input:focus { border-color: var(--primary-glow); outline: none; background: rgba(255, 255, 255, 0.1); }
 
         button { 
             padding: 16px 24px; 
@@ -131,52 +121,54 @@
             color: white; border: none; border-radius: 12px;
             cursor: pointer; font-size: 16px; font-weight: 700;
             transition: 0.4s;
-            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2);
         }
 
-        button:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 8px 25px rgba(0, 210, 255, 0.4); }
+        button:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-        .logo { font-size: 26px; font-weight: 900; letter-spacing: 2px; color: #fff; }
+        .logo { font-size: 26px; font-weight: 900; letter-spacing: 2px; color: #fff; text-decoration: none; }
         .logo span { color: var(--primary-glow); }
+
+        /* Footer Styling - Mandatory for Razorpay */
+        footer {
+            padding: 40px 5%;
+            background: rgba(10, 15, 25, 0.9);
+            text-align: center;
+            color: var(--text-dim);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: auto;
+        }
+
+        .footer-links { margin-bottom: 20px; }
+        .footer-links a { 
+            color: #fff; 
+            text-decoration: none; 
+            margin: 0 15px; 
+            font-size: 14px; 
+            transition: color 0.3s;
+        }
+        .footer-links a:hover { color: var(--primary-glow); }
 
         .profile-trigger {
             background: rgba(255, 255, 255, 0.07);
             padding: 10px 20px; border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer; position: relative;
+            cursor: pointer; color: #fff;
         }
 
         .dropdown-menu {
-            position: absolute; right: 0; top: 60px;
+            position: absolute; right: 5%; top: 70px;
             background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px; width: 200px; display: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1000;
         }
 
         .dropdown-menu.show { display: block; }
         .dropdown-item { padding: 12px 20px; color: var(--text-dim); cursor: pointer; }
         .dropdown-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
 
-        /* --- SEARCH GRID --- */
-        .search-grid {
-            display: grid;
-            grid-template-columns: 2fr 2fr 1fr;
-            gap: 20px;
-            align-items: end;
-        }
-
         .hidden { display: none !important; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        footer {
-            padding: 30px; background: rgba(10, 15, 25, 0.8);
-            text-align: center; color: var(--text-dim); font-size: 13px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-        footer a { color: #fff; text-decoration: none; margin: 0 10px; }
-
-        /* Booking Modal */
         #booking-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
@@ -186,7 +178,7 @@
 </head>
 <body>
 
-<!-- 1. AUTHENTICATION SECTION (Visible by Default) -->
+<!-- 1. AUTHENTICATION SECTION -->
 <div id="auth-container">
     <div class="auth-card" id="auth-box">
         <h2 id="form-title">Neural Login</h2>
@@ -214,10 +206,10 @@
     </div>
 </div>
 
-<!-- 2. FULL SCREEN DASHBOARD (Hidden until login) -->
+<!-- 2. FULL SCREEN DASHBOARD -->
 <div id="dashboard" class="hidden">
     <header>
-        <div class="logo">JET<span>SWIFT</span></div>
+        <a href="/" class="logo">JET<span>SWIFT</span></a>
         <div style="position: relative;">
             <div class="profile-trigger" onclick="toggleDropdown()">
                 <span id="user-display-name">Pilot</span> ▾
@@ -239,38 +231,22 @@
                 <div><label>Active Identity</label><p id="p-name-display" style="font-size: 18px;"></p></div>
                 <div><label>Secure Registry</label><p id="p-email-display" style="font-size: 18px;"></p></div>
             </div>
-            <button onclick="showSearch()" style="margin-top: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">Return to Terminal</button>
+            <button onclick="showSearch()" style="margin-top: 20px;">Return to Terminal</button>
         </div>
 
         <!-- Search View -->
         <div id="booking-section">
             <div class="glass-panel">
                 <h2>Flight Trajectory Scanner</h2>
-                <div class="search-grid">
-                    <div class="input-group" style="margin:0;">
-                        <label>Origin Node</label>
-                        <input type="text" id="origin" placeholder="e.g. Bengaluru">
-                    </div>
-                    <div class="input-group" style="margin:0;">
-                        <label>Destination Node</label>
-                        <input type="text" id="destination" placeholder="e.g. Delhi">
-                    </div>
-                    <button onclick="findTrip()">Scan Now</button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 100px; gap: 20px; align-items: end;">
+                    <div class="input-group" style="margin:0;"><label>Origin</label><input type="text" id="origin" placeholder="Source"></div>
+                    <div class="input-group" style="margin:0;"><label>Destination</label><input type="text" id="destination" placeholder="Destination"></div>
+                    <button onclick="findTrip()">Scan</button>
                 </div>
             </div>
-            
-            <div id="results">
-                <!-- Flight cards will appear here -->
-            </div>
+            <div id="results"></div>
         </div>
     </div>
-
-    <footer>
-        <p>&copy; 2026 JetSwift AI Trajectories. All systems operational.</p>
-        <div>
-            <a href="terms.html">Terms</a> | <a href="privacy.html">Privacy</a> | <a href="contact.html">Support</a>
-        </div>
-    </footer>
 </div>
 
 <!-- 3. PASSENGER MODAL -->
@@ -278,49 +254,35 @@
     <div class="auth-card" style="max-width: 400px;">
         <h2>Passenger Data</h2>
         <div class="input-group"><label>Age</label><input type="number" id="book-age"></div>
-        <div class="input-group"><label>Comms Number</label><input type="text" id="book-mobile"></div>
-        <div class="input-group"><label>Location Registry</label><input type="text" id="book-address"></div>
+        <div class="input-group"><label>Mobile</label><input type="text" id="book-mobile"></div>
+        <div class="input-group"><label>Address</label><input type="text" id="book-address"></div>
         <button onclick="confirmAndPay()" style="width: 100%;">Finalize & Execute</button>
         <button onclick="closeModal()" style="background: transparent; color: var(--text-dim); margin-top: 10px; width: 100%;">Abort</button>
     </div>
 </div>
 
-<!-- SCRIPTS -->
+<!-- 4. MANDATORY BUSINESS FOOTER (Always Visible) -->
+<footer>
+    <div class="footer-links">
+        <a href="contact.html">Contact Us</a>
+        <a href="terms.html">Terms & Conditions</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="refund.html">Refund Policy</a>
+    </div>
+    <p>&copy; 2026 JETSWIFTFLY. All rights reserved. Registered in Bihar, operating in Bengaluru.</p>
+    <p style="font-size: 11px; margin-top: 10px; opacity: 0.6;">All transactions are processed securely via encrypted neural links.</p>
+</footer>
+
 <script src="app.js"></script>
 <script>
     let isLogin = true;
-
     function toggleAuth() {
         isLogin = !isLogin;
         document.getElementById('form-title').innerText = isLogin ? "Neural Login" : "Initialize Account";
         document.getElementById('btn-text').innerText = isLogin ? "Authenticate" : "Initialize";
         document.getElementById('name-group').classList.toggle('hidden', isLogin);
-        document.getElementById('toggle-text').innerHTML = isLogin ? 
-            "New user? <span onclick='toggleAuth()' style='color: var(--primary-glow); cursor: pointer;'>Initialize Account</span>" : 
-            "Existing pilot? <span onclick='toggleAuth()' style='color: var(--primary-glow); cursor: pointer;'>Login Access</span>";
     }
-
-    function toggleDropdown() {
-        document.getElementById('profile-dropdown').classList.toggle('show');
-    }
-
-    // Close dropdown when clicking outside
-    window.onclick = function(event) {
-        if (!event.target.matches('.profile-trigger')) {
-            const dropdowns = document.getElementsByClassName("dropdown-menu");
-            for (let i = 0; i < dropdowns.length; i++) {
-                if (dropdowns[i].classList.contains('show')) dropdowns[i].classList.remove('show');
-            }
-        }
-    }
-
-    /* 
-       Note for app.js: 
-       When login is successful, you must call:
-       document.getElementById('auth-container').classList.add('hidden');
-       document.getElementById('dashboard').classList.remove('hidden');
-    */
+    function toggleDropdown() { document.getElementById('profile-dropdown').classList.toggle('show'); }
 </script>
-
 </body>
 </html>

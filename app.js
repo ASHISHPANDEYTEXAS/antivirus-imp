@@ -1,15 +1,35 @@
-let isLogin = false;
+let isLogin = true; // Default to login state
 let currentUserData = null;
-let selectedFlight = null; // Stores flight info while user fills modal
+let selectedFlight = null;
+
+/**
+ * Initialize app and check for existing session
+ */
+window.onload = () => {
+    const savedUser = localStorage.getItem('jetswift_user');
+    if (savedUser) {
+        currentUserData = JSON.parse(savedUser);
+        enterDashboard();
+    }
+};
+
+/**
+ * Switch from Auth screen to Dashboard
+ */
+function enterDashboard() {
+    document.getElementById('auth-container').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    document.getElementById('user-display-name').innerText = currentUserData.name.split(' ')[0];
+    showSearch();
+}
 
 /**
  * Toggles between Login and Sign Up forms
  */
 function toggleAuth() {
     isLogin = !isLogin;
-    document.getElementById('form-title').innerText = isLogin ? "Login" : "Sign Up";
-    document.getElementById('btn-text').innerText = isLogin ? "Login" : "Register";
-    // Toggle name field visibility
+    document.getElementById('form-title').innerText = isLogin ? "Neural Login" : "Initialize Account";
+    document.getElementById('btn-text').innerText = isLogin ? "Authenticate" : "Initialize";
     document.getElementById('name-group').classList.toggle('hidden', isLogin);
 }
 
@@ -20,7 +40,6 @@ function toggleDropdown() {
     document.getElementById('profile-dropdown').classList.toggle('show');
 }
 
-// Close dropdown if user clicks outside
 window.onclick = function(event) {
     if (!event.target.closest('.user-profile-wrapper')) {
         const dropdown = document.getElementById('profile-dropdown');
@@ -38,7 +57,7 @@ async function submitAuth() {
     const password = document.getElementById('password').value;
     const name = document.getElementById('name').value;
 
-    if (!email || !password) return alert("Please fill all fields");
+    if (!email || !password) return alert("System requires full credentials.");
 
     const endpoint = isLogin ? '/login' : '/register';
     const bodyData = isLogin ? { email, password } : { name, email, password };
@@ -54,33 +73,31 @@ async function submitAuth() {
         if (response.ok) {
             if (isLogin) {
                 currentUserData = data.user;
-                document.getElementById('auth-box').classList.add('hidden');
-                document.getElementById('dashboard').classList.remove('hidden');
-                document.getElementById('user-display-name').innerText = data.user.name.split(' ')[0];
-                showSearch();
+                localStorage.setItem('jetswift_user', JSON.stringify(data.user));
+                enterDashboard();
             } else {
-                alert("Account created! Please login.");
+                alert("Account initialized. Please proceed to authentication.");
                 toggleAuth();
             }
         } else {
-            alert(data.error || "Error occurred");
+            alert(data.error || "Access Denied.");
         }
     } catch (err) {
-        alert("Server connection failed.");
+        alert("Neural link failed. Server unreachable.");
     }
 }
 
 /**
- * Flight Search
+ * Flight Search with Styled Result Cards
  */
 async function findTrip() {
     const origin = document.getElementById('origin').value;
     const destination = document.getElementById('destination').value;
     const resultsDiv = document.getElementById('results');
 
-    if (!origin || !destination) return alert("Enter both cities");
+    if (!origin || !destination) return alert("Specify trajectory coordinates.");
 
-    resultsDiv.innerHTML = "<div class='spinner'></div>";
+    resultsDiv.innerHTML = `<div style="text-align:center; padding: 20px;">Scanning airspace...</div>`;
 
     try {
         const url = `https://jetswift-backend.onrender.com/flights/search?origin=${origin}&destination=${destination}`;
@@ -88,29 +105,32 @@ async function findTrip() {
         const flights = await response.json();
 
         resultsDiv.innerHTML = "";
-        if (flights.length === 0) return resultsDiv.innerHTML = "<p>No flights found.</p>";
+        if (flights.length === 0) return resultsDiv.innerHTML = "<p style='text-align:center;'>No trajectories found for this sector.</p>";
 
         flights.forEach(f => {
             resultsDiv.innerHTML += `
-                <div class="flight-card">
-                    <div style="display:flex; justify-content:space-between;">
-                        <strong>${f.airline}</strong>
-                        <span style="color:#007bff; font-weight:bold;">₹${f.price}</span>
+                <div class="glass-panel" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; animation: fadeIn 0.5s ease;">
+                    <div>
+                        <h3 style="margin:0; color: var(--primary-glow);">${f.airline}</h3>
+                        <p style="margin: 5px 0; font-size: 14px; color: var(--text-dim);">${f.flightNumber} | ${f.date}</p>
+                        <p style="margin: 0; font-weight: bold;">${f.origin} ➔ ${f.destination}</p>
                     </div>
-                    <p style="font-size:13px; color:#666; margin:5px 0;">${f.flightNumber} | ${f.date}</p>
-                    <button onclick="openBookingModal('${f.airline}', '${f.flightNumber}', '${f.origin}', '${f.destination}', '${f.price}', '${f.date}')" 
-                            style="padding:10px; font-size:14px; background: #28a745;">
-                        Book Ticket
-                    </button>
+                    <div style="text-align: right;">
+                        <h2 style="margin:0; color: #fff;">₹${f.price}</h2>
+                        <button onclick="openBookingModal('${f.airline}', '${f.flightNumber}', '${f.origin}', '${f.destination}', '${f.price}', '${f.date}')" 
+                                style="margin-top: 10px; padding: 10px 20px; font-size: 14px;">
+                            Book Seat
+                        </button>
+                    </div>
                 </div>`;
         });
     } catch (err) {
-        resultsDiv.innerHTML = "Error loading flights.";
+        resultsDiv.innerHTML = "Error accessing flight data.";
     }
 }
 
 /**
- * Booking Flow: Modal -> Payment -> Ticket
+ * Booking Flow
  */
 function openBookingModal(airline, flightNo, from, to, price, date) {
     selectedFlight = { airline, flightNo, from, to, price, date };
@@ -127,9 +147,8 @@ async function confirmAndPay() {
     const mobile = document.getElementById('book-mobile').value;
     const address = document.getElementById('book-address').value;
 
-    if (!age || !mobile || !address) return alert("Please provide passenger details.");
+    if (!age || !mobile || !address) return alert("Passenger identity data incomplete.");
 
-    // Update currentUserData with the details provided in the modal for the ticket
     currentUserData.age = age;
     currentUserData.pass_mobile = mobile;
     currentUserData.address = address;
@@ -146,22 +165,22 @@ async function confirmAndPay() {
             key: "rzp_test_Skn83hTPivycrT",
             amount: order.amount,
             currency: "INR",
-            name: "SkyHigh Air",
-            description: `Booking ${selectedFlight.flightNo}`,
+            name: "JETSWIFT",
+            description: `Trajectory: ${selectedFlight.flightNo}`,
             order_id: order.id,
             handler: function (res) {
-                alert("Payment Successful!");
+                alert("Transaction Confirmed.");
                 closeModal();
                 generatePDFTicket(selectedFlight.airline, selectedFlight.flightNo, selectedFlight.from, selectedFlight.to, selectedFlight.price, selectedFlight.date);
             },
             prefill: { name: currentUserData.name, email: currentUserData.email },
-            theme: { color: "#003580" }
+            theme: { color: "#00d2ff" }
         };
 
         const rzp = new window.Razorpay(options);
         rzp.open();
     } catch (err) {
-        alert("Payment initialization failed.");
+        alert("Payment gateway connection failed.");
     }
 }
 
@@ -169,38 +188,35 @@ function generatePDFTicket(airline, flightNo, from, to, price, date) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     
+    doc.setFontSize(20);
+    doc.text("JETSWIFT OFFICIAL TICKET", 10, 20);
+    doc.setFontSize(12);
+    
     const content = `
     -------------------------------------------
-               SKYHIGH AIR TICKET
-    -------------------------------------------
-    PASSENGER: ${currentUserData.name} (Age: ${currentUserData.age})
+    PASSENGER: ${currentUserData.name}
+    AGE: ${currentUserData.age}
     CONTACT: ${currentUserData.pass_mobile}
-    ADDRESS: ${currentUserData.address}
     
     FLIGHT: ${airline} ${flightNo}
     ROUTE: ${from} -> ${to}
     DATE: ${date}
-    PAID: INR ${price}
+    AMOUNT PAID: INR ${price}
     
-    STATUS: CONFIRMED
+    STATUS: SYSTEM CONFIRMED
     -------------------------------------------
     `;
 
-    doc.text(content, 10, 10);
+    doc.text(content, 10, 40);
     doc.save(`Ticket_${flightNo}.pdf`);
 }
 
 /**
- * Secure Logout & Profile Views
+ * Session Management
  */
 function handleLogout() {
-    document.getElementById('loader').classList.remove('hidden');
-    setTimeout(() => {
-        currentUserData = null;
-        localStorage.clear();
-        sessionStorage.clear();
-        location.reload(); // Hard reset for security
-    }, 1200);
+    localStorage.removeItem('jetswift_user');
+    location.reload(); 
 }
 
 function showProfile() {
@@ -208,11 +224,9 @@ function showProfile() {
     document.getElementById('profile-section').classList.remove('hidden');
     document.getElementById('p-name-display').innerText = currentUserData.name;
     document.getElementById('p-email-display').innerText = currentUserData.email;
-    document.getElementById('profile-dropdown').classList.remove('show');
 }
 
 function showSearch() {
     document.getElementById('profile-section').classList.add('hidden');
     document.getElementById('booking-section').classList.remove('hidden');
-    document.getElementById('profile-dropdown').classList.remove('show');
 }

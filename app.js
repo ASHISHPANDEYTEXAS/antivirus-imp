@@ -1,21 +1,16 @@
-let isLogin = true; // Default to login state
+let isLogin = true;
 let currentUserData = null;
 let selectedFlight = null;
 
-/**
- * Initialize app and check for existing session
- */
+// Use sessionStorage so data is wiped when the tab is closed
 window.onload = () => {
-    const savedUser = localStorage.getItem('jetswift_user');
+    const savedUser = sessionStorage.getItem('jetswift_user');
     if (savedUser) {
         currentUserData = JSON.parse(savedUser);
         enterDashboard();
     }
 };
 
-/**
- * Switch from Auth screen to Dashboard
- */
 function enterDashboard() {
     document.getElementById('auth-container').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
@@ -23,9 +18,6 @@ function enterDashboard() {
     showSearch();
 }
 
-/**
- * Toggles between Login and Sign Up forms
- */
 function toggleAuth() {
     isLogin = !isLogin;
     document.getElementById('form-title').innerText = isLogin ? "Neural Login" : "Initialize Account";
@@ -33,31 +25,24 @@ function toggleAuth() {
     document.getElementById('name-group').classList.toggle('hidden', isLogin);
 }
 
-/**
- * Expandable Profile Menu Logic
- */
-function toggleDropdown() {
+function toggleDropdown(event) {
+    event.stopPropagation();
     document.getElementById('profile-dropdown').classList.toggle('show');
 }
 
 window.onclick = function(event) {
     if (!event.target.closest('.user-profile-wrapper')) {
         const dropdown = document.getElementById('profile-dropdown');
-        if (dropdown && dropdown.classList.contains('show')) {
-            dropdown.classList.remove('show');
-        }
+        if (dropdown) dropdown.classList.remove('show');
     }
 }
 
-/**
- * Authentication: Register/Login
- */
 async function submitAuth() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const name = document.getElementById('name').value;
 
-    if (!email || !password) return alert("System requires full credentials.");
+    if (!email || !password) return alert("Credentials required.");
 
     const endpoint = isLogin ? '/login' : '/register';
     const bodyData = isLogin ? { email, password } : { name, email, password };
@@ -73,31 +58,35 @@ async function submitAuth() {
         if (response.ok) {
             if (isLogin) {
                 currentUserData = data.user;
-                localStorage.setItem('jetswift_user', JSON.stringify(data.user));
+                sessionStorage.setItem('jetswift_user', JSON.stringify(data.user));
                 enterDashboard();
             } else {
-                alert("Account initialized. Please proceed to authentication.");
+                alert("Account created. Please login.");
                 toggleAuth();
             }
         } else {
             alert(data.error || "Access Denied.");
         }
     } catch (err) {
-        alert("Neural link failed. Server unreachable.");
+        alert("Server connection failed.");
     }
 }
 
-/**
- * Flight Search with Styled Result Cards
- */
+function getRandomTime() {
+    const hours = String(Math.floor(Math.random() * 24)).padStart(2, '0');
+    const mins = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+    return `${hours}:${mins}`;
+}
+
 async function findTrip() {
     const origin = document.getElementById('origin').value;
     const destination = document.getElementById('destination').value;
+    const date = document.getElementById('travel-date').value;
     const resultsDiv = document.getElementById('results');
 
-    if (!origin || !destination) return alert("Specify trajectory coordinates.");
+    if (!origin || !destination || !date) return alert("Please select origin, destination, and date.");
 
-    resultsDiv.innerHTML = `<div style="text-align:center; padding: 20px;">Scanning airspace...</div>`;
+    resultsDiv.innerHTML = `<p style="text-align:center;">Scanning trajectories...</p>`;
 
     try {
         const url = `https://jetswift-backend.onrender.com/flights/search?origin=${origin}&destination=${destination}`;
@@ -105,52 +94,47 @@ async function findTrip() {
         const flights = await response.json();
 
         resultsDiv.innerHTML = "";
-        if (flights.length === 0) return resultsDiv.innerHTML = "<p style='text-align:center;'>No trajectories found for this sector.</p>";
+        if (flights.length === 0) return resultsDiv.innerHTML = "<p>No flights found for this route.</p>";
 
         flights.forEach(f => {
+            const flightTime = getRandomTime(); // Generate random time
             resultsDiv.innerHTML += `
-                <div class="glass-panel" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; animation: fadeIn 0.5s ease;">
+                <div class="glass-panel" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div>
                         <h3 style="margin:0; color: var(--primary-glow);">${f.airline}</h3>
-                        <p style="margin: 5px 0; font-size: 14px; color: var(--text-dim);">${f.flightNumber} | ${f.date}</p>
-                        <p style="margin: 0; font-weight: bold;">${f.origin} ➔ ${f.destination}</p>
+                        <p style="margin: 5px 0; font-size: 14px; color: var(--text-dim);">${f.flightNumber} | ${date} at ${flightTime}</p>
                     </div>
                     <div style="text-align: right;">
-                        <h2 style="margin:0; color: #fff;">₹${f.price}</h2>
-                        <button onclick="openBookingModal('${f.airline}', '${f.flightNumber}', '${f.origin}', '${f.destination}', '${f.price}', '${f.date}')" 
-                                style="margin-top: 10px; padding: 10px 20px; font-size: 14px;">
-                            Book Seat
-                        </button>
+                        <h2 style="margin:0;">₹${f.price}</h2>
+                        <button onclick="openBookingModal('${f.airline}', '${f.flightNumber}', '${f.origin}', '${f.destination}', '${f.price}', '${date}', '${flightTime}')" style="margin-top:10px; padding: 8px 15px;">Book</button>
                     </div>
                 </div>`;
         });
     } catch (err) {
-        resultsDiv.innerHTML = "Error accessing flight data.";
+        resultsDiv.innerHTML = "Error loading data.";
     }
 }
 
-/**
- * Booking Flow
- */
-function openBookingModal(airline, flightNo, from, to, price, date) {
-    selectedFlight = { airline, flightNo, from, to, price, date };
+function openBookingModal(airline, flightNo, from, to, price, date, time) {
+    selectedFlight = { airline, flightNo, from, to, price, date, time };
     document.getElementById('booking-modal').classList.remove('hidden');
 }
 
 function closeModal() {
     document.getElementById('booking-modal').classList.add('hidden');
-    selectedFlight = null;
 }
 
 async function confirmAndPay() {
     const age = document.getElementById('book-age').value;
     const mobile = document.getElementById('book-mobile').value;
+    const parent = document.getElementById('book-parent').value;
     const address = document.getElementById('book-address').value;
 
-    if (!age || !mobile || !address) return alert("Passenger identity data incomplete.");
+    if (!age || !mobile || !parent || !address) return alert("Fill all passenger details.");
 
     currentUserData.age = age;
-    currentUserData.pass_mobile = mobile;
+    currentUserData.parent = parent;
+    currentUserData.mobile = mobile;
     currentUserData.address = address;
 
     try {
@@ -165,58 +149,42 @@ async function confirmAndPay() {
             key: "rzp_test_Skn83hTPivycrT",
             amount: order.amount,
             currency: "INR",
-            name: "JETSWIFT",
-            description: `Trajectory: ${selectedFlight.flightNo}`,
+            name: "JETSWIFTFLY",
+            description: `Flight ${selectedFlight.flightNo}`,
             order_id: order.id,
             handler: function (res) {
-                alert("Transaction Confirmed.");
+                alert("Payment Successful!");
                 closeModal();
-                generatePDFTicket(selectedFlight.airline, selectedFlight.flightNo, selectedFlight.from, selectedFlight.to, selectedFlight.price, selectedFlight.date);
+                generatePDFTicket();
             },
             prefill: { name: currentUserData.name, email: currentUserData.email },
             theme: { color: "#00d2ff" }
         };
-
         const rzp = new window.Razorpay(options);
         rzp.open();
     } catch (err) {
-        alert("Payment gateway connection failed.");
+        alert("Payment initialization failed.");
     }
 }
 
-function generatePDFTicket(airline, flightNo, from, to, price, date) {
+function generatePDFTicket() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    
-    doc.setFontSize(20);
-    doc.text("JETSWIFT OFFICIAL TICKET", 10, 20);
+    doc.setFontSize(18);
+    doc.text("JETSWIFTFLY - E-TICKET", 10, 20);
     doc.setFontSize(12);
-    
-    const content = `
-    -------------------------------------------
-    PASSENGER: ${currentUserData.name}
-    AGE: ${currentUserData.age}
-    CONTACT: ${currentUserData.pass_mobile}
-    
-    FLIGHT: ${airline} ${flightNo}
-    ROUTE: ${from} -> ${to}
-    DATE: ${date}
-    AMOUNT PAID: INR ${price}
-    
-    STATUS: SYSTEM CONFIRMED
-    -------------------------------------------
-    `;
-
-    doc.text(content, 10, 40);
-    doc.save(`Ticket_${flightNo}.pdf`);
+    doc.text(`Passenger: ${currentUserData.name} (Age: ${currentUserData.age})`, 10, 40);
+    doc.text(`Guardian Contact: ${currentUserData.parent}`, 10, 50);
+    doc.text(`Flight: ${selectedFlight.airline} ${selectedFlight.flightNo}`, 10, 70);
+    doc.text(`Route: ${selectedFlight.from} to ${selectedFlight.to}`, 10, 80);
+    doc.text(`Date/Time: ${selectedFlight.date} at ${selectedFlight.time}`, 10, 90);
+    doc.text(`Status: PAID & CONFIRMED`, 10, 110);
+    doc.save(`Ticket_${selectedFlight.flightNo}.pdf`);
 }
 
-/**
- * Session Management
- */
 function handleLogout() {
-    localStorage.removeItem('jetswift_user');
-    location.reload(); 
+    sessionStorage.clear();
+    location.reload();
 }
 
 function showProfile() {

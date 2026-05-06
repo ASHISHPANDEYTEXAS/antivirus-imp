@@ -78,6 +78,9 @@ function getRandomTime() {
     return `${hours}:${mins}`;
 }
 
+/**
+ * Modified to search by Full Name and include random flight times
+ */
 async function findTrip() {
     const origin = document.getElementById('origin').value;
     const destination = document.getElementById('destination').value;
@@ -86,15 +89,16 @@ async function findTrip() {
 
     if (!origin || !destination || !date) return alert("Please select origin, destination, and date.");
 
-    resultsDiv.innerHTML = `<p style="text-align:center;">Scanning trajectories...</p>`;
+    resultsDiv.innerHTML = `<p style="text-align:center;">Scanning trajectories for ${origin} to ${destination}...</p>`;
 
     try {
-        const url = `https://jetswift-backend.onrender.com/flights/search?origin=${origin}&destination=${destination}`;
+        // Updated to pass full city names via URL parameters
+        const url = `https://jetswift-backend.onrender.com/flights/search?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&date=${date}`;
         const response = await fetch(url);
         const flights = await response.json();
 
         resultsDiv.innerHTML = "";
-        if (flights.length === 0) return resultsDiv.innerHTML = "<p>No flights found for this route.</p>";
+        if (!flights || flights.length === 0) return resultsDiv.innerHTML = "<p style='text-align:center;'>No flights found for this route. Please check spelling.</p>";
 
         flights.forEach(f => {
             const flightTime = getRandomTime(); // Generate random time
@@ -103,15 +107,16 @@ async function findTrip() {
                     <div>
                         <h3 style="margin:0; color: var(--primary-glow);">${f.airline}</h3>
                         <p style="margin: 5px 0; font-size: 14px; color: var(--text-dim);">${f.flightNumber} | ${date} at ${flightTime}</p>
+                        <p style="margin: 0; font-weight: 500;">${f.origin_name || origin} ➔ ${f.destination_name || destination}</p>
                     </div>
                     <div style="text-align: right;">
                         <h2 style="margin:0;">₹${f.price}</h2>
-                        <button onclick="openBookingModal('${f.airline}', '${f.flightNumber}', '${f.origin}', '${f.destination}', '${f.price}', '${date}', '${flightTime}')" style="margin-top:10px; padding: 8px 15px;">Book</button>
+                        <button onclick="openBookingModal('${f.airline}', '${f.flightNumber}', '${f.origin_name || origin}', '${f.destination_name || destination}', '${f.price}', '${date}', '${flightTime}')" style="margin-top:10px; padding: 8px 15px;">Book</button>
                     </div>
                 </div>`;
         });
     } catch (err) {
-        resultsDiv.innerHTML = "Error loading data.";
+        resultsDiv.innerHTML = "Error loading trajectory data.";
     }
 }
 
@@ -132,6 +137,7 @@ async function confirmAndPay() {
 
     if (!age || !mobile || !parent || !address) return alert("Fill all passenger details.");
 
+    // Store passenger data for the ticket
     currentUserData.age = age;
     currentUserData.parent = parent;
     currentUserData.mobile = mobile;
@@ -174,11 +180,12 @@ function generatePDFTicket() {
     doc.text("JETSWIFTFLY - E-TICKET", 10, 20);
     doc.setFontSize(12);
     doc.text(`Passenger: ${currentUserData.name} (Age: ${currentUserData.age})`, 10, 40);
-    doc.text(`Guardian Contact: ${currentUserData.parent}`, 10, 50);
-    doc.text(`Flight: ${selectedFlight.airline} ${selectedFlight.flightNo}`, 10, 70);
-    doc.text(`Route: ${selectedFlight.from} to ${selectedFlight.to}`, 10, 80);
-    doc.text(`Date/Time: ${selectedFlight.date} at ${selectedFlight.time}`, 10, 90);
-    doc.text(`Status: PAID & CONFIRMED`, 10, 110);
+    doc.text(`Guardian/Parent Contact: ${currentUserData.parent}`, 10, 50);
+    doc.text(`Contact: ${currentUserData.mobile}`, 10, 60);
+    doc.text(`Flight: ${selectedFlight.airline} ${selectedFlight.flightNo}`, 10, 80);
+    doc.text(`Route: ${selectedFlight.from} to ${selectedFlight.to}`, 10, 90);
+    doc.text(`Date/Time: ${selectedFlight.date} at ${selectedFlight.time}`, 10, 100);
+    doc.text(`Status: PAID & CONFIRMED`, 10, 120);
     doc.save(`Ticket_${selectedFlight.flightNo}.pdf`);
 }
 
